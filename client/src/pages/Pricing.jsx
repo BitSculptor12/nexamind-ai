@@ -15,7 +15,7 @@ from "@mui/icons-material/CheckCircleRounded";
 import AutoAwesomeRoundedIcon
 from "@mui/icons-material/AutoAwesomeRounded";
 
-import axios from "axios";
+import api from "../api/axios";
 
 function Pricing() {
 
@@ -26,10 +26,7 @@ async () => {
   try {
 
     const res =
-    await axios.post(
-
-      "http://localhost:5000/api/payment/create-order"
-    );
+    await api.post("/api/payment/create-order");
 
     const order =
     res.data;

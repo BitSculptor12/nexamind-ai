@@ -13,6 +13,8 @@ import {
   Typography,
 } from "@mui/material";
 
+import { apiUrl } from "../config";
+
 function Documents() {
   const [documents, setDocuments] =
     useState([]);
@@ -29,7 +31,7 @@ function Documents() {
           );
 
         const res = await fetch(
-          "http://localhost:5000/api/documents",
+          apiUrl("/api/documents"),
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -81,7 +83,7 @@ function Documents() {
 
           const res =
             await fetch(
-              "http://localhost:5000/api/documents/upload",
+              apiUrl("/api/documents/upload"),
               {
                 method:
                   "POST",

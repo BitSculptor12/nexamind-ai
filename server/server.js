@@ -41,17 +41,37 @@ app.use("/api/documents", require("./routes/documentRoutes"));
 app.use("/api/chat", require("./routes/chatRoutes"));
 // app.use("/api/payment", require("./routes/paymentRoutes"));
 
-app.get("/", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.json({
     success: true,
-    message: "✅ API Running"
+    message: "API running",
   });
 });
+
+const clientDist = path.join(__dirname, "..", "client", "dist");
+const isProduction = process.env.NODE_ENV === "production";
+
+if (isProduction) {
+  app.use(express.static(clientDist));
+
+  app.get(/^\/(?!api).*/, (req, res, next) => {
+    res.sendFile(path.join(clientDist, "index.html"), (err) => {
+      if (err) next(err);
+    });
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.json({
+      success: true,
+      message: "API running",
+    });
+  });
+}
 
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: "Route not found"
+    message: "Route not found",
   });
 });
 

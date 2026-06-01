@@ -15,6 +15,8 @@ import {
 
 import SendIcon from "@mui/icons-material/Send";
 import ReactMarkdown from "react-markdown";
+
+import { apiUrl } from "../config";
 function Chat() {
   const [messages, setMessages] =
     useState([]);
@@ -66,7 +68,7 @@ function Chat() {
 
         const res =
           await fetch(
-            "http://localhost:5000/api/chat",
+            apiUrl("/api/chat"),
             {
               method:
                 "POST",
