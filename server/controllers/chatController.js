@@ -3,9 +3,9 @@ const askAI = require("../services/aiService");
 
 const chatWithDocuments = async (req, res) => {
   try {
-    const { message } = req.body;
+    const message = req.body.message || req.body.question;
 
-    if (!message) {
+    if (!message || typeof message !== "string" || !message.trim()) {
       return res.status(400).json({ success: false, message: "Message required" });
     }
 
@@ -197,11 +197,12 @@ if (matched.length === 0) {
     });
 
   } catch (error) {
-    console.error("CHAT ERROR:", error.message);
+    const serverError = error.response?.data?.error?.message || error.message || "AI response failed.";
+    console.error("CHAT ERROR:", serverError, error.response?.data || "");
     return res.status(500).json({
       success: false,
-      message: "Chat failed: " + error.message,
-      reply: "Error aaya. Backend check karein.",
+      message: "Chat failed: " + serverError,
+      reply: serverError,
     });
   }
 };

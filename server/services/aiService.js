@@ -36,25 +36,43 @@ const callOpenRouter = async (messages, modelIndex = 0) => {
       }
     );
 
-    const text = response.data?.choices?.[0]?.message?.content?.trim();
-    if (!text) throw new Error("Empty response");
+    const text =
+      response.data?.choices?.[0]?.message?.content?.trim() ||
+      response.data?.choices?.[0]?.text?.trim();
+
+    if (!text) {
+      console.error("OpenRouter returned no text content:", JSON.stringify(response.data));
+      throw new Error("Empty response");
+    }
+
     console.log(`Success with model: ${model}`);
     return text;
   } catch (error) {
-    console.error(`Model ${model} failed:`, error.response?.data?.error?.message || error.message);
+    const openRouterMessage =
+      error.response?.data?.error?.message ||
+      error.response?.data?.message ||
+      error.message ||
+      "Unknown OpenRouter error";
+
+    console.error(`Model ${model} failed:`, openRouterMessage);
 
     if (
       error.response?.status === 429 ||
       error.response?.status === 503 ||
-      error.response?.status === 404 ||
+      error.response?.status === 504 ||
+      error.response?.status === 500 ||
+      error.response?.status === 502 ||
       error.message.includes("Empty response") ||
-      error.message.includes("timeout")
+      error.message.includes("timeout") ||
+      error.message.includes("Network Error") ||
+      error.code === "ECONNABORTED" ||
+      error.code === "ECONNRESET"
     ) {
       console.log("Switching to next model...");
       return callOpenRouter(messages, modelIndex + 1);
     }
 
-    throw error;
+    throw new Error(openRouterMessage);
   }
 };
 
