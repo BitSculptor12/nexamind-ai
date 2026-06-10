@@ -5,7 +5,7 @@ import {
   useState,
 } from "react";
 
-import api from "../api/axios";
+import api, { retryRequest } from "../api/axios";
 
 const AuthContext =
   createContext(null);
@@ -43,12 +43,11 @@ export const AuthProvider = ({
     email,
     password
   ) => {
-    const res = await api.post(
-      "/api/auth/login",
-      {
+    const res = await retryRequest(() =>
+      api.post("/api/auth/login", {
         email,
         password,
-      }
+      })
     );
 
     if (res.data.success) {
@@ -83,13 +82,12 @@ export const AuthProvider = ({
     email,
     password
   ) => {
-    const res = await api.post(
-      "/api/auth/register",
-      {
+    const res = await retryRequest(() =>
+      api.post("/api/auth/register", {
         name,
         email,
         password,
-      }
+      })
     );
 
     if (res.data.success) {

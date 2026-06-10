@@ -1,6 +1,6 @@
-const configuredBase = import.meta.env.VITE_API_URL?.replace(/\/$/, "") ?? "";
+const BACKEND_URL = "https://nexamind-ai-a29k.onrender.com";
 
 export function apiUrl(path) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  return `${configuredBase}${normalizedPath}`;
+  return `${BACKEND_URL}${normalizedPath}`;
 }

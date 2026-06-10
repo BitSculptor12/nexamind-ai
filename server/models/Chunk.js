@@ -21,6 +21,10 @@ const chunkSchema =
 
       text: String,
 
+      filename: String,
+
+      source: String,
+
       embedding: [Number],
     },
 

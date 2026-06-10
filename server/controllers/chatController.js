@@ -185,26 +185,7 @@ if (matched.length === 0) {
     console.log("MATCHED:", matched.length);
     console.log("PREVIEW:", context.substring(0, 200));
 
-    const prompt = `Tu NexaMind AI Study Assistant hai.
-
-STUDENT KE NOTES:
-${context}
-
-STUDENT KA SAWAAL: ${message}
-
-BAHUT IMPORTANT RULES - ZAROOR FOLLOW KAR:
-1. Sirf aur sirf notes mein se jawab de
-2. Agar notes mein clearly likha hai tabhi answer de
-3. Agar sawaal aur notes ka topic alag hai to SEEDHA bolo: "Yeh topic aapke notes mein nahi hai. Kripya relevant notes upload karein."
-4. GALAT topic se answer BILKUL mat de — jaise string function puchha to Git commands mat batao
-5. Hindi mein poocha to Hindi mein jawab de, English mein poocha to English mein
-6. Clear headings aur bullet points use kar
-7. Simple language use kar jo student samajh sake
-8. Jawab sahi topic ka hai to end mein 2 follow-up questions suggest kar
-9. Important terms **bold** karo
-10. Agar confused ho topic ke baare mein to poochho mat — seedha "notes mein nahi hai" bolo`;
-
-    const aiResponse = await askAI(prompt);
+    const aiResponse = await askAI(message, context);
 
     const filenames = [...new Set(chunks.map(c => c.filename || c.source || "User Notes"))];
 

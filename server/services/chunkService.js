@@ -1,29 +1,22 @@
-const chunkText = (
-  text,
-  chunkSize = 500
-) => {
-  if (!text) return [];
+const chunkText = (text, chunkSize = 600) => {
+  if (!text || text.trim().length === 0) return [];
 
-  const words =
-    text.split(" ");
-
+  const sentences = text.split(/[.!?\n]+/).filter((s) => s.trim().length > 20);
   const chunks = [];
+  let current = "";
 
-  for (
-    let i = 0;
-    i < words.length;
-    i += chunkSize
-  ) {
-    chunks.push(
-      words
-        .slice(
-          i,
-          i + chunkSize
-        )
-        .join(" ")
-    );
+  for (const sentence of sentences) {
+    if ((current + sentence).length > chunkSize && current.length > 0) {
+      chunks.push(current.trim());
+      current = sentence;
+    } else {
+      current += (current ? " " : "") + sentence;
+    }
   }
 
+  if (current.trim().length > 20) chunks.push(current.trim());
+
+  console.log(`Chunked into ${chunks.length} pieces`);
   return chunks;
 };
 

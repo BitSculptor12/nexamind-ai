@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 const corsOptions = require("./config/cors");
 const { initializeAI } = require("./config/openai");
+const keepAlive = require("./keepAlive");
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/documents", require("./routes/documentRoutes"));
 app.use("/api/chat", require("./routes/chatRoutes"));
+app.use("/api/quiz", require("./routes/quizRoutes"));
 // app.use("/api/payment", require("./routes/paymentRoutes"));
 
 app.get("/api/health", (req, res) => {
@@ -79,4 +81,5 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`\n📡 Server running on http://localhost:${PORT}\n`);
+  keepAlive();
 });

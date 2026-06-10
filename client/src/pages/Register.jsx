@@ -173,9 +173,9 @@ function Register() {
         }
       } catch (err) {
         setError(
-          err.response?.data
-            ?.message ||
-            "Server error. Make sure backend is running on port 5000."
+          err.response?.data?.message ||
+            err.message ||
+            "Backend is waking up. Wait 30 seconds and retry."
         );
       } finally {
         setLoading(false);

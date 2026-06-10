@@ -1,4 +1,5 @@
 import {
+  useEffect,
   useState,
 } from "react";
 
@@ -57,6 +58,23 @@ function Login() {
     setError] =
     useState("");
 
+  const [slowLoad,
+    setSlowLoad] =
+    useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setSlowLoad(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setSlowLoad(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [loading]);
+
   const handleSubmit =
     async (e) => {
       e.preventDefault();
@@ -98,9 +116,9 @@ function Login() {
         }
       } catch (err) {
         setError(
-          err.response?.data
-            ?.message ||
-            "Server error. Make sure backend is running on port 5000."
+          err.response?.data?.message ||
+            err.message ||
+            "Backend is waking up. Wait 30 seconds and retry."
         );
       } finally {
         setLoading(false);
@@ -290,6 +308,17 @@ function Login() {
             NexaMind
             workspace
           </Typography>
+
+          {loading && slowLoad && (
+            <Alert
+              severity="info"
+              sx={{
+                mb: 2,
+              }}
+            >
+              Backend is starting up (may take 30-60 seconds on first load)...
+            </Alert>
+          )}
 
           {error && (
             <Alert
