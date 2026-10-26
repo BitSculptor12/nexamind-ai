@@ -1,5 +1,6 @@
+from pathlib import Path
 
-import { useEffect, useMemo, useState } from "react";
+code = r'''import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Box,
@@ -10,7 +11,7 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Typography
+  Typography,
 } from "@mui/material";
 import FolderOpenRoundedIcon from "@mui/icons-material/FolderOpenRounded";
 import ChatRoundedIcon from "@mui/icons-material/ChatRounded";
@@ -24,111 +25,174 @@ import QuizRoundedIcon from "@mui/icons-material/QuizRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { getDocumentsAPI } from "../api/documents";
 
-const colors = {
+const C = {
+  bg: "#090A12",
+  panel: "#10111C",
+  panelHover: "#151627",
+  border: "rgba(160, 160, 210, 0.13)",
+  borderHover: "rgba(150, 130, 255, 0.45)",
+  text: "#F5F5FA",
+  muted: "#A1A3B8",
+  soft: "#777B95",
   purple: "#8B7CFF",
-  cyan: "#22D3EE",
-  green: "#34D399",
-  amber: "#FBBF24",
-  text: "#F4F4FC",
-  muted: "#9CA3B8",
-  panel: "#10111F",
-  border: "rgba(148, 163, 255, 0.13)"
+  violet: "#B29BFF",
+  cyan: "#32D4E8",
+  green: "#36D6A0",
+  amber: "#F5B84B",
+  rose: "#FB7185",
 };
 
 const panelSx = {
-  p: { xs: 2, sm: 2.75 },
-  borderRadius: 3,
-  bgcolor: colors.panel,
-  color: colors.text,
-  border: `1px solid ${colors.border}`,
+  bgcolor: C.panel,
+  color: C.text,
+  border: `1px solid ${C.border}`,
+  borderRadius: "16px",
   backgroundImage: "none",
-  minWidth: 0
+  boxShadow: "0 8px 28px rgba(0,0,0,0.10)",
+  minWidth: 0,
 };
 
-function StatCard({ title, value, icon, color, loading, subtitle, onClick }) {
+function SectionHeading({ eyebrow, title, description, action }) {
+  return (
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      justifyContent="space-between"
+      alignItems={{ xs: "flex-start", sm: "center" }}
+      gap={1.25}
+      sx={{ mb: 2 }}
+    >
+      <Box>
+        {eyebrow && (
+          <Typography
+            sx={{
+              color: C.purple,
+              fontSize: 10,
+              fontWeight: 800,
+              letterSpacing: 1.4,
+              textTransform: "uppercase",
+              mb: 0.65,
+            }}
+          >
+            {eyebrow}
+          </Typography>
+        )}
+        <Typography
+          sx={{
+            color: C.text,
+            fontSize: { xs: 17, sm: 19 },
+            fontWeight: 750,
+            letterSpacing: "-0.35px",
+          }}
+        >
+          {title}
+        </Typography>
+        {description && (
+          <Typography sx={{ color: C.muted, fontSize: 12.5, mt: 0.55 }}>
+            {description}
+          </Typography>
+        )}
+      </Box>
+      {action}
+    </Stack>
+  );
+}
+
+function StatCard({ title, value, subtitle, icon, color, loading, onClick }) {
   return (
     <Paper
       elevation={0}
       onClick={onClick}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick();
-        }
-      } : undefined}
+      onKeyDown={
+        onClick
+          ? (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                onClick();
+              }
+            }
+          : undefined
+      }
       sx={{
         ...panelSx,
-        p: 2.25,
+        p: { xs: 1.8, sm: 2 },
+        minHeight: 150,
         height: "100%",
         cursor: onClick ? "pointer" : "default",
-        transition: "border-color 180ms, transform 180ms",
-        "&:hover": onClick ? {
-          borderColor: `${color}80`,
-          transform: "translateY(-3px)"
-        } : {},
+        display: "flex",
+        flexDirection: "column",
+        transition: "border-color 160ms ease, background-color 160ms ease, transform 160ms ease",
+        "&:hover": onClick
+          ? {
+              borderColor: `${color}75`,
+              bgcolor: C.panelHover,
+              transform: "translateY(-2px)",
+            }
+          : {},
         "&:focus-visible": {
           outline: `2px solid ${color}`,
-          outlineOffset: 2
-        }
+          outlineOffset: 2,
+        },
       }}
     >
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-      >
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
         <Box
           sx={{
-            width: 44,
-            height: 44,
-            borderRadius: 2.5,
+            width: 38,
+            height: 38,
+            borderRadius: "11px",
             display: "grid",
             placeItems: "center",
-            bgcolor: `${color}18`,
-            color
+            bgcolor: `${color}17`,
+            color,
+            "& svg": { fontSize: 21 },
           }}
         >
           {icon}
         </Box>
         {onClick && (
-          <ArrowForwardRoundedIcon
-            sx={{ fontSize: 18, color: colors.muted }}
-          />
+          <ArrowForwardRoundedIcon sx={{ fontSize: 17, color: C.soft }} />
         )}
       </Stack>
 
       {loading ? (
-        <>
-          <Skeleton width="48%" sx={{ mt: 2 }} />
-          <Skeleton width="70%" />
-        </>
+        <Box sx={{ mt: 2 }}>
+          <Skeleton width="48%" height={31} />
+          <Skeleton width="72%" height={19} />
+        </Box>
       ) : (
-        <>
+        <Box sx={{ mt: "auto", pt: 1.7 }}>
           <Typography
             sx={{
-              mt: 2,
-              fontSize: 29,
+              fontSize: typeof value === "number" ? 26 : 19,
+              lineHeight: 1.25,
               fontWeight: 800,
-              letterSpacing: "-0.8px"
+              letterSpacing: "-0.55px",
+              overflowWrap: "anywhere",
             }}
           >
             {value}
           </Typography>
-          <Typography sx={{ fontSize: 14, fontWeight: 600, mt: 0.4 }}>
+          <Typography sx={{ fontSize: 13, fontWeight: 700, mt: 0.55 }}>
             {title}
           </Typography>
           <Typography
-            sx={{ fontSize: 12, color: colors.muted, mt: 0.5 }}
+            sx={{
+              color: C.muted,
+              fontSize: 11.5,
+              lineHeight: 1.5,
+              mt: 0.35,
+            }}
           >
             {subtitle}
           </Typography>
-        </>
+        </Box>
       )}
     </Paper>
   );
@@ -140,36 +204,59 @@ function ActionCard({ title, description, icon, color, onClick }) {
       onClick={onClick}
       fullWidth
       sx={{
+        boxSizing: "border-box",
+        width: "100%",
         height: "100%",
-        minHeight: 105,
-        p: 1.75,
-        borderRadius: 2.5,
+        minHeight: 104,
+        p: 1.8,
+        borderRadius: "14px",
         display: "flex",
         alignItems: "flex-start",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         flexDirection: "column",
-        gap: 1,
+        gap: 1.25,
         textAlign: "left",
         textTransform: "none",
-        color: colors.text,
-        border: `1px solid ${colors.border}`,
+        color: C.text,
+        border: `1px solid ${C.border}`,
         bgcolor: "rgba(255,255,255,0.018)",
+        transition: "border-color 160ms ease, background-color 160ms ease",
         "&:hover": {
-          bgcolor: `${color}12`,
-          borderColor: `${color}70`
-        }
+          bgcolor: `${color}0D`,
+          borderColor: `${color}70`,
+        },
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <Box sx={{ color, display: "flex" }}>{icon}</Box>
-        <Typography fontWeight={700}>{title}</Typography>
-      </Box>
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ width: "100%", gap: 1 }}
+      >
+        <Stack direction="row" alignItems="center" spacing={1.1} sx={{ minWidth: 0 }}>
+          <Box sx={{ color, display: "flex", "& svg": { fontSize: 21 } }}>
+            {icon}
+          </Box>
+          <Typography
+            sx={{
+              fontSize: 13,
+              fontWeight: 750,
+              lineHeight: 1.4,
+              color: C.text,
+            }}
+          >
+            {title}
+          </Typography>
+        </Stack>
+        <ArrowForwardRoundedIcon sx={{ color: C.soft, fontSize: 17, flexShrink: 0 }} />
+      </Stack>
       <Typography
         sx={{
-          fontSize: 12,
-          color: colors.muted,
+          color: C.muted,
+          fontSize: 11.5,
+          lineHeight: 1.55,
           whiteSpace: "normal",
-          lineHeight: 1.5
+          fontWeight: 400,
         }}
       >
         {description}
@@ -181,7 +268,6 @@ function ActionCard({ title, description, icon, color, onClick }) {
 function Dashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
-
   const [loading, setLoading] = useState(true);
   const [documentCount, setDocumentCount] = useState(null);
   const [error, setError] = useState("");
@@ -197,72 +283,70 @@ function Dashboard() {
     () =>
       new Date().toLocaleDateString(undefined, {
         weekday: "long",
-        month: "long",
+        month: "short",
         day: "numeric",
-        year: "numeric"
+        year: "numeric",
       }),
     []
   );
 
-  const loadDocuments = async () => {
+  const loadDocuments = useCallback(async () => {
     setLoading(true);
     setError("");
-
     try {
       const data = await getDocumentsAPI();
       const docs = data?.documents ?? data?.data;
-
       if (Array.isArray(docs)) {
         setDocumentCount(docs.length);
       } else {
         setDocumentCount(null);
-        setError("Could not read document statistics.");
+        setError("We couldn't read your document list. Please try again.");
       }
     } catch {
       setDocumentCount(null);
-      setError("Documents could not be loaded. Please try again.");
+      setError("Documents couldn't be loaded. Check your connection and retry.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadDocuments();
-  }, []);
+  }, [loadDocuments]);
 
   const stats = [
     {
       title: "Documents",
       value: documentCount ?? "—",
-      subtitle: "Your uploaded knowledge",
+      subtitle: "Uploaded to your library",
       icon: <FolderOpenRoundedIcon />,
-      color: colors.purple,
-      onClick: () => navigate("/documents")
+      color: C.purple,
+      onClick: () => navigate("/documents"),
     },
     {
-      title: "AI Chat",
-      value: "Explore",
-      subtitle: "Ask questions and learn",
+      title: "AI conversations",
+      value: "Chat",
+      subtitle: "Ask questions about your notes",
       icon: <ChatRoundedIcon />,
-      color: "#A78BFA",
-      onClick: () => navigate("/chat")
+      color: C.violet,
+      onClick: () => navigate("/chat"),
     },
     {
-      title: "Knowledge Graph",
+      title: "Knowledge graph",
       value: "Explore",
-      subtitle: "Discover connections",
+      subtitle: "Discover connected ideas",
       icon: <HubRoundedIcon />,
-      color: colors.cyan,
-      onClick: () => navigate("/graph")
+      color: C.cyan,
+      onClick: () => navigate("/graph"),
     },
     {
-      title: "Study Mode",
+      title: "Study workspace",
       value: "Learn",
-      subtitle: "Revise your knowledge",
+      subtitle: "Practice and revise",
       icon: <SchoolRoundedIcon />,
-      color: colors.green,
-      onClick: () => navigate("/study")
-    }
+      color: C.green,
+      onClick: () => navigate("/study"),
+    },
   ];
 
   const actions = [
@@ -270,106 +354,113 @@ function Dashboard() {
       title: "Upload documents",
       description: "Add PDFs and learning materials",
       icon: <UploadFileRoundedIcon />,
-      color: colors.purple,
-      path: "/documents"
+      color: C.purple,
+      path: "/documents",
     },
     {
       title: "Start a conversation",
-      description: "Get answers from your knowledge",
+      description: "Ask questions and explore your notes",
       icon: <ChatRoundedIcon />,
-      color: "#A78BFA",
-      path: "/chat"
+      color: C.violet,
+      path: "/chat",
     },
     {
       title: "Explore knowledge graph",
-      description: "View connected concepts",
+      description: "See connections between concepts",
       icon: <AccountTreeRoundedIcon />,
-      color: colors.cyan,
-      path: "/graph"
+      color: C.cyan,
+      path: "/graph",
     },
     {
       title: "Practice and revise",
-      description: "Open your study workspace",
+      description: "Continue learning in Study Mode",
       icon: <QuizRoundedIcon />,
-      color: colors.green,
-      path: "/study"
+      color: C.green,
+      path: "/study",
     },
     {
       title: "Research a topic",
-      description: "Open your AI research workspace",
+      description: "Open your research workspace",
       icon: <SearchRoundedIcon />,
-      color: colors.amber,
-      path: "/research"
+      color: C.amber,
+      path: "/research",
     },
     {
-      title: "Check contradictions",
-      description: "Review potential knowledge conflicts",
+      title: "Review contradictions",
+      description: "Inspect potential knowledge conflicts",
       icon: <WarningAmberRoundedIcon />,
-      color: "#FB7185",
-      path: "/contradictions"
-    }
+      color: C.rose,
+      path: "/contradictions",
+    },
   ];
 
   return (
-    <Box sx={{ width: "100%", pb: 4, color: colors.text }}>
-      {/* Welcome banner */}
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: 1500,
+        mx: "auto",
+        pb: { xs: 3, md: 4 },
+        color: C.text,
+      }}
+    >
+      {/* Compact welcome header */}
       <Paper
         elevation={0}
         sx={{
           ...panelSx,
-          p: { xs: 2.5, sm: 3.5 },
+          p: { xs: 2.2, sm: 3 },
           mb: 3,
-          overflow: "hidden",
-          position: "relative",
           background:
-            "radial-gradient(ellipse at 85% 15%, rgba(139,124,255,0.20), transparent 45%), linear-gradient(120deg, #14152A, #10111F 75%)"
+            "radial-gradient(ellipse at 88% 0%, rgba(139,124,255,0.12), transparent 43%), #10111C",
         }}
       >
         <Stack
           direction={{ xs: "column", sm: "row" }}
           alignItems={{ xs: "flex-start", sm: "center" }}
           justifyContent="space-between"
-          gap={2.5}
+          gap={2.25}
         >
-          <Box sx={{ minWidth: 0 }}>
-            <Chip
-              icon={<AutoAwesomeRoundedIcon />}
-              label="YOUR AI WORKSPACE"
-              size="small"
-              sx={{
-                mb: 2,
-                color: colors.purple,
-                bgcolor: "rgba(139,124,255,0.12)",
-                fontWeight: 700,
-                letterSpacing: 0.7,
-                "& .MuiChip-icon": { color: colors.purple }
-              }}
-            />
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.4 }}>
+              <AutoAwesomeRoundedIcon sx={{ color: C.purple, fontSize: 17 }} />
+              <Typography
+                sx={{
+                  color: C.purple,
+                  fontSize: 10.5,
+                  fontWeight: 800,
+                  letterSpacing: 1.25,
+                  textTransform: "uppercase",
+                }}
+              >
+                Your AI workspace
+              </Typography>
+            </Stack>
             <Typography
               sx={{
-                fontSize: { xs: 25, sm: 32 },
+                fontSize: { xs: 24, sm: 29, lg: 31 },
                 fontWeight: 800,
                 letterSpacing: "-1px",
-                lineHeight: 1.25,
-                overflowWrap: "anywhere"
+                lineHeight: 1.2,
+                overflowWrap: "anywhere",
               }}
             >
-              {greeting}, {user?.name || "there"} 👋
+              {greeting}, {user?.name || "there"} <Box component="span">👋</Box>
             </Typography>
-            <Typography sx={{ mt: 1, color: colors.muted }}>
+            <Typography sx={{ mt: 0.9, color: C.muted, fontSize: 12.5 }}>
               {today}
             </Typography>
             <Typography
               sx={{
-                mt: 1.5,
-                maxWidth: 540,
+                mt: 1.2,
+                maxWidth: 590,
+                color: "#C3C4D4",
+                fontSize: 13,
                 lineHeight: 1.7,
-                color: "#C1C4D6",
-                fontSize: 14
               }}
             >
-              Your knowledge, connected. Upload your notes, explore ideas
-              and get more from what you learn.
+              Your knowledge, connected. Bring your notes together, explore ideas,
+              and make every study session count.
             </Typography>
           </Box>
 
@@ -378,16 +469,24 @@ function Dashboard() {
             startIcon={<ChatRoundedIcon />}
             onClick={() => navigate("/chat")}
             sx={{
-              flexShrink: 0,
-              px: 2.5,
-              py: 1.4,
-              borderRadius: 2.5,
-              fontWeight: 700,
+              boxSizing: "border-box",
+              width: "auto",
+              minWidth: 178,
+              maxWidth: "100%",
+              minHeight: 46,
+              flex: "0 0 auto",
+              alignSelf: { xs: "stretch", sm: "center" },
+              px: 2.2,
+              py: 1.1,
+              borderRadius: "11px",
+              fontSize: 13,
+              fontWeight: 750,
               textTransform: "none",
-              bgcolor: colors.purple,
+              whiteSpace: "nowrap",
+              bgcolor: C.purple,
               color: "#fff",
-              boxShadow: "0 8px 24px rgba(139,124,255,0.20)",
-              "&:hover": { bgcolor: "#7868F5" }
+              boxShadow: "0 5px 18px rgba(139,124,255,0.17)",
+              "&:hover": { bgcolor: "#7868F5", boxShadow: "none" },
             }}
           >
             Start a new chat
@@ -395,37 +494,41 @@ function Dashboard() {
         </Stack>
       </Paper>
 
-      {/* Workspace overview */}
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{ mb: 1.75 }}
-      >
-        <Box>
-          <Typography fontSize={19} fontWeight={800}>
-            Workspace overview
-          </Typography>
-          <Typography fontSize={13} sx={{ color: colors.muted, mt: 0.5 }}>
-            Your tools at a glance
-          </Typography>
-        </Box>
-
-        <Button
-          size="small"
-          startIcon={<RefreshRoundedIcon />}
-          onClick={loadDocuments}
-          disabled={loading}
-          sx={{ textTransform: "none", color: colors.purple }}
-        >
-          Refresh
-        </Button>
-      </Stack>
+      {/* Overview */}
+      <SectionHeading
+        eyebrow="Overview"
+        title="Your workspace"
+        description="A quick look at your learning tools"
+        action={
+          <Button
+            size="small"
+            startIcon={<RefreshRoundedIcon />}
+            onClick={loadDocuments}
+            disabled={loading}
+            sx={{
+              textTransform: "none",
+              color: C.muted,
+              fontSize: 12,
+              borderRadius: "9px",
+              "&:hover": { color: C.text, bgcolor: "rgba(255,255,255,0.05)" },
+            }}
+          >
+            Refresh
+          </Button>
+        }
+      />
 
       {error && (
         <Alert
           severity="warning"
-          sx={{ mb: 2, borderRadius: 2 }}
+          sx={{
+            mb: 2,
+            borderRadius: "12px",
+            bgcolor: "rgba(245,184,75,0.08)",
+            color: C.text,
+            border: "1px solid rgba(245,184,75,0.2)",
+            "& .MuiAlert-icon": { color: C.amber },
+          }}
           action={
             <Button color="inherit" size="small" onClick={loadDocuments}>
               Retry
@@ -436,26 +539,25 @@ function Dashboard() {
         </Alert>
       )}
 
-      <Grid container spacing={2}>
+      <Grid container spacing={1.75}>
         {stats.map((stat) => (
           <Grid item xs={12} sm={6} lg={3} key={stat.title}>
-            <StatCard {...stat} loading={loading && stat.title === "Documents"} />
+            <StatCard
+              {...stat}
+              loading={loading && stat.title === "Documents"}
+            />
           </Grid>
         ))}
       </Grid>
 
       {/* Quick actions */}
       <Box sx={{ mt: 4 }}>
-        <Typography fontSize={20} fontWeight={800}>
-          Quick actions
-        </Typography>
-        <Typography
-          sx={{ color: colors.muted, fontSize: 13, mt: 0.5, mb: 2 }}
-        >
-          Pick up where you want to work
-        </Typography>
-
-        <Grid container spacing={1.75}>
+        <SectionHeading
+          eyebrow="Get started"
+          title="Quick actions"
+          description="Jump straight into what you want to do"
+        />
+        <Grid container spacing={1.5}>
           {actions.map((action) => (
             <Grid item xs={12} sm={6} lg={4} key={action.title}>
               <ActionCard
@@ -467,51 +569,65 @@ function Dashboard() {
         </Grid>
       </Box>
 
-      {/* Knowledge workspace */}
-      <Grid container spacing={2} sx={{ mt: 2 }}>
+      {/* Bottom information panels */}
+      <Grid container spacing={1.75} sx={{ mt: 2 }}>
         <Grid item xs={12} md={7}>
-          <Paper elevation={0} sx={{ ...panelSx, height: "100%" }}>
-            <Stack direction="row" alignItems="center" gap={1.25} mb={1}>
-              <FolderOpenRoundedIcon sx={{ color: colors.purple }} />
-              <Typography fontSize={18} fontWeight={800}>
-                Your knowledge library
-              </Typography>
+          <Paper
+            elevation={0}
+            sx={{
+              ...panelSx,
+              p: { xs: 2, sm: 2.5 },
+              height: "100%",
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={1.1} sx={{ mb: 1.2 }}>
+              <Box
+                sx={{
+                  display: "grid",
+                  placeItems: "center",
+                  width: 36,
+                  height: 36,
+                  borderRadius: "10px",
+                  bgcolor: `${C.purple}17`,
+                  color: C.purple,
+                }}
+              >
+                <DescriptionRoundedIcon sx={{ fontSize: 20 }} />
+              </Box>
+              <Box>
+                <Typography sx={{ fontSize: 15, fontWeight: 750 }}>
+                  Knowledge library
+                </Typography>
+                <Typography sx={{ color: C.muted, fontSize: 11.5, mt: 0.2 }}>
+                  Your documents in one place
+                </Typography>
+              </Box>
             </Stack>
 
-            <Typography
-              sx={{ fontSize: 13, color: colors.muted, lineHeight: 1.7 }}
-            >
-              Your uploaded documents are the foundation of your AI
-              workspace. Open your library to manage files and continue
-              learning from your materials.
-            </Typography>
-
-            <Divider sx={{ my: 2, borderColor: colors.border }} />
+            <Divider sx={{ my: 1.8, borderColor: C.border }} />
 
             {loading ? (
               <Skeleton width="65%" />
             ) : documentCount === null ? (
-              <Typography fontSize={14} color="text.secondary">
-                Document count is currently unavailable.
+              <Typography sx={{ color: C.muted, fontSize: 12.5 }}>
+                Document statistics are currently unavailable.
               </Typography>
             ) : documentCount === 0 ? (
-              <Box sx={{ py: 1 }}>
-                <Typography fontWeight={700}>
-                  Your library is ready for its first document.
+              <Box>
+                <Typography sx={{ fontWeight: 700, fontSize: 13 }}>
+                  Start building your knowledge library
                 </Typography>
-                <Typography
-                  sx={{ color: colors.muted, fontSize: 13, mt: 0.75 }}
-                >
-                  Upload your notes or study materials to get started.
+                <Typography sx={{ color: C.muted, fontSize: 12, mt: 0.6, lineHeight: 1.6 }}>
+                  Upload study notes or PDFs to start asking questions about your materials.
                 </Typography>
               </Box>
             ) : (
-              <Typography fontSize={14}>
+              <Typography sx={{ color: C.muted, fontSize: 12.5, lineHeight: 1.7 }}>
                 You have{" "}
-                <Box component="span" sx={{ color: colors.cyan, fontWeight: 800 }}>
+                <Box component="span" sx={{ color: C.cyan, fontWeight: 800 }}>
                   {documentCount} {documentCount === 1 ? "document" : "documents"}
                 </Box>{" "}
-                in your workspace.
+                in your workspace. Open the library to manage your files.
               </Typography>
             )}
 
@@ -519,10 +635,13 @@ function Dashboard() {
               onClick={() => navigate("/documents")}
               endIcon={<ArrowForwardRoundedIcon />}
               sx={{
-                mt: 2,
+                mt: 1.7,
+                p: 0,
                 textTransform: "none",
-                fontWeight: 700,
-                color: colors.purple
+                fontSize: 12.5,
+                fontWeight: 750,
+                color: C.purple,
+                "&:hover": { bgcolor: "transparent", color: C.violet },
               }}
             >
               Open documents
@@ -531,58 +650,71 @@ function Dashboard() {
         </Grid>
 
         <Grid item xs={12} md={5}>
-          <Paper elevation={0} sx={{ ...panelSx, height: "100%" }}>
-            <Stack direction="row" alignItems="center" gap={1.25} mb={1}>
-              <AutoAwesomeRoundedIcon sx={{ color: colors.cyan }} />
-              <Typography fontSize={18} fontWeight={800}>
-                Suggested next steps
-              </Typography>
-            </Stack>
-
-            <Typography
-              sx={{ color: colors.muted, fontSize: 13, mb: 2, lineHeight: 1.7 }}
-            >
-              Choose a task to continue. Suggestions are navigation shortcuts,
-              not claims that an AI task has already run.
-            </Typography>
-
-            {[
-              {
-                title: "Ask questions about your notes",
-                path: "/chat"
-              },
-              {
-                title: "Explore connected concepts",
-                path: "/graph"
-              },
-              {
-                title: "Start a research session",
-                path: "/research"
-              }
-            ].map((item) => (
-              <Button
-                key={item.title}
-                fullWidth
-                onClick={() => navigate(item.path)}
-                endIcon={<ArrowForwardRoundedIcon />}
+          <Paper
+            elevation={0}
+            sx={{
+              ...panelSx,
+              p: { xs: 2, sm: 2.5 },
+              height: "100%",
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={1.1} sx={{ mb: 1.2 }}>
+              <Box
                 sx={{
-                  justifyContent: "space-between",
-                  textAlign: "left",
-                  textTransform: "none",
-                  color: colors.text,
-                  borderRadius: 2,
-                  px: 1.5,
-                  py: 1.3,
-                  mb: 1,
-                  bgcolor: "rgba(255,255,255,0.025)",
-                  "&:hover": {
-                    bgcolor: "rgba(139,124,255,0.10)"
-                  }
+                  display: "grid",
+                  placeItems: "center",
+                  width: 36,
+                  height: 36,
+                  borderRadius: "10px",
+                  bgcolor: `${C.cyan}17`,
+                  color: C.cyan,
                 }}
               >
-                {item.title}
-              </Button>
-            ))}
+                <AutoAwesomeRoundedIcon sx={{ fontSize: 20 }} />
+              </Box>
+              <Box>
+                <Typography sx={{ fontSize: 15, fontWeight: 750 }}>
+                  Continue exploring
+                </Typography>
+                <Typography sx={{ color: C.muted, fontSize: 11.5, mt: 0.2 }}>
+                  Pick your next step
+                </Typography>
+              </Box>
+            </Stack>
+
+            <Stack spacing={0.8} sx={{ mt: 1.7 }}>
+              {[
+                { label: "Ask your notes a question", path: "/chat" },
+                { label: "Explore connected concepts", path: "/graph" },
+                { label: "Open research workspace", path: "/research" },
+              ].map((item) => (
+                <Button
+                  key={item.label}
+                  fullWidth
+                  onClick={() => navigate(item.path)}
+                  endIcon={<ArrowForwardRoundedIcon />}
+                  sx={{
+                    justifyContent: "space-between",
+                    textAlign: "left",
+                    textTransform: "none",
+                    color: "#DCDD EB".replace(" ", ""),
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    borderRadius: "9px",
+                    px: 1.3,
+                    py: 1.1,
+                    bgcolor: "rgba(255,255,255,0.022)",
+                    "&:hover": {
+                      bgcolor: "rgba(139,124,255,0.09)",
+                      color: "#FFFFFF",
+                    },
+                    "& .MuiButton-endIcon": { color: C.soft },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+            </Stack>
           </Paper>
         </Grid>
       </Grid>
@@ -591,3 +723,9 @@ function Dashboard() {
 }
 
 export default Dashboard;
+'''
+# correct an awkward but valid-ish color expression to a simple hex
+code = code.replace('"#DCDD EB".replace(" ", "")', '"#DCDDED"')
+path = Path("/mnt/data/Dashboard.jsx")
+path.write_text(code, encoding="utf-8")
+print(f"Created {path} ({len(code.splitlines())} lines)")
