@@ -468,26 +468,32 @@ function Dashboard() {
             variant="contained"
             startIcon={<ChatRoundedIcon />}
             onClick={() => navigate("/chat")}
-            sx={{
-              boxSizing: "border-box",
-              width: "auto",
-              minWidth: 178,
-              maxWidth: "100%",
-              minHeight: 46,
-              flex: "0 0 auto",
-              alignSelf: { xs: "stretch", sm: "center" },
-              px: 2.2,
-              py: 1.1,
-              borderRadius: "11px",
-              fontSize: 13,
-              fontWeight: 750,
-              textTransform: "none",
-              whiteSpace: "nowrap",
-              bgcolor: C.purple,
-              color: "#fff",
-              boxShadow: "0 5px 18px rgba(139,124,255,0.17)",
-              "&:hover": { bgcolor: "#7868F5", boxShadow: "none" },
-            }}
+           sx={{
+  display: "inline-flex",
+  width: "auto",
+  minWidth: 0,
+  maxWidth: "100%",
+  height: "46px",
+  minHeight: "46px",
+  maxHeight: "46px",
+  flex: "0 0 auto",
+  alignSelf: "center",
+  px: 2.5,
+  py: 0,
+  borderRadius: "10px",
+  fontSize: "13px",
+  fontWeight: 700,
+  lineHeight: 1.2,
+  whiteSpace: "nowrap",
+  textTransform: "none",
+  bgcolor: colors.purple,
+  color: "#fff",
+  boxShadow: "none",
+  "&:hover": {
+    bgcolor: "#7868F5",
+    boxShadow: "none"
+  }
+}}
           >
             Start a new chat
           </Button>
