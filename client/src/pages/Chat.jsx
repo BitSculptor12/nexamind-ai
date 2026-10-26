@@ -25,19 +25,6 @@ import ReactMarkdown from "react-markdown";
 import { apiUrl } from "../config";
 import "../Chat.css";
 
-const C = {
-  bg: "#090A12",
-  panel: "#10111C",
-  panel2: "#141526",
-  text: "#F5F5FC",
-  muted: "#A1A3B8",
-  soft: "#787D96",
-  border: "rgba(160, 160, 210, 0.14)",
-  purple: "#9382FF",
-  violet: "#B49AFF",
-  cyan: "#42D8E8",
-  green: "#43D9A3",
-};
 
 const suggestions = [
   {
@@ -78,6 +65,7 @@ function Chat() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [listening, setListening] = useState(false);
+  const [voiceHint, setVoiceHint] = useState("");
   const [copiedIndex, setCopiedIndex] = useState(null);
 
   const bottomRef = useRef(null);
@@ -107,6 +95,7 @@ function Chat() {
     if (!question || loading) return;
 
     setError("");
+    setVoiceHint("");
     setInput("");
     setLoading(true);
     setMessages((previous) => [
@@ -173,6 +162,7 @@ function Chat() {
 
   const handleVoiceInput = () => {
     setError("");
+    setVoiceHint("");
 
     const SpeechRecognition =
       typeof window !== "undefined"
@@ -181,52 +171,88 @@ function Chat() {
 
     if (!SpeechRecognition) {
       setError(
-        "Voice typing is not supported in this browser. Try the latest Chrome or Edge, or type your message."
+        "Voice typing is not available in this browser. Try the latest Chrome or Edge, or type your message."
       );
       return;
     }
 
     if (listening) {
-      recognitionRef.current?.stop();
+      try {
+        recognitionRef.current?.stop();
+      } catch {
+        // The recognizer may already have stopped.
+      }
       setListening(false);
+      setVoiceHint("Voice input stopped. Review your transcript before sending.");
       return;
     }
 
     try {
       const recognition = new SpeechRecognition();
-      recognition.lang = navigator.language || "en-US";
-      recognition.continuous = false;
+      const startingText = input.trim();
+      let recognitionFailed = false;
+
+      // Use Indian English by default for this app's primary audience.
+      // Change this to "hi-IN" if you mainly want Hindi transcription.
+      recognition.lang = "en-IN";
+      recognition.continuous = true;
       recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
       recognitionRef.current = recognition;
 
-      const startingText = input.trim();
+      recognition.onstart = () => {
+        setListening(true);
+        setVoiceHint("Listening now — speak clearly, then press stop.");
+      };
 
       recognition.onresult = (event) => {
+        // SpeechRecognition.results contains the current final and interim
+        // transcript. Rebuild it each time instead of appending interim text,
+        // which would duplicate words on successive result events.
         const transcript = Array.from(event.results)
           .map((result) => result[0]?.transcript || "")
+          .filter(Boolean)
           .join(" ")
           .trim();
 
         if (transcript) {
           setInput(
-            startingText
-              ? `${startingText} ${transcript}`
-              : transcript
+            [startingText, transcript]
+              .filter(Boolean)
+              .join(" ")
+              .trim()
           );
         }
       };
 
       recognition.onerror = (event) => {
-        if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-          setError(
-            "Microphone access was blocked. Allow microphone permission in your browser settings and try again."
-          );
-        } else if (event.error === "no-speech") {
-          setError("No speech was detected. Try speaking a little louder.");
-        } else if (event.error !== "aborted") {
-          setError("Voice transcription stopped. You can try again or type your message.");
-        }
+        recognitionFailed = true;
         setListening(false);
+        setVoiceHint("");
+
+        const errorMessages = {
+          "not-allowed":
+            "Microphone permission is blocked. Click the site icon beside the address bar, allow Microphone, then reload the page.",
+          "service-not-allowed":
+            "The browser blocked its speech-recognition service. Check browser permissions or try Chrome/Edge with microphone access enabled.",
+          "audio-capture":
+            "No microphone audio could be captured. Check that your microphone is connected and not being used exclusively by another app.",
+          "no-speech":
+            "No speech was detected. Click the microphone, wait for the listening indicator, then speak clearly.",
+          network:
+            "The browser speech service could not connect (network error). Check your internet connection. If it keeps happening, browser-based transcription may be unavailable and a server-side transcription service is needed.",
+          "language-not-supported":
+            "The browser speech service does not support English (India). Change recognition.lang to 'en-US' in Chat.jsx and try again.",
+          aborted: "",
+        };
+
+        const message =
+          errorMessages[event.error] ||
+          `Speech recognition failed (${event.error || "unknown error"}). Check microphone permission and internet access, then try again.`;
+
+        if (message) setError(message);
+        // Keep this useful for debugging in the browser console.
+        console.warn("NexaMind speech recognition error:", event.error);
       };
 
       recognition.onend = () => {
@@ -234,15 +260,28 @@ function Chat() {
         if (recognitionRef.current === recognition) {
           recognitionRef.current = null;
         }
+
+        if (!recognitionFailed) {
+          setVoiceHint((current) =>
+            current || "Voice input stopped. Review your transcript before sending."
+          );
+        }
+
         inputRef.current?.focus();
       };
 
       recognition.start();
       setListening(true);
+      setVoiceHint("Starting microphone…");
       inputRef.current?.focus();
-    } catch {
+    } catch (err) {
       setListening(false);
-      setError("Could not start the microphone. Please check browser permissions.");
+      setVoiceHint("");
+      setError(
+        err?.name === "NotAllowedError"
+          ? "Microphone permission is blocked. Allow microphone access for this site and retry."
+          : "Could not start voice input. Check browser microphone permissions and try again."
+      );
     }
   };
 
@@ -456,7 +495,7 @@ function Chat() {
                 <span>
                   <IconButton
                     onClick={handleSend}
-                    disabled={!input.trim() || loading}
+                    disabled={!input.trim() || loading || listening}
                     aria-label="Send message"
                     className="nx-chat__send-button"
                   >
@@ -469,6 +508,18 @@ function Chat() {
                 </span>
               </Tooltip>
             </Box>
+            {(listening || voiceHint) && (
+              <Box
+                className={`nx-chat__voice-status${listening ? " is-listening" : ""}`}
+                role="status"
+                aria-live="polite"
+              >
+                <span className="nx-chat__voice-dot" />
+                <Typography component="span">
+                  {listening ? "Listening now — speak clearly, then press stop." : voiceHint}
+                </Typography>
+              </Box>
+            )}
             <Typography component="p" className="nx-chat__hint">
               Enter to send · Shift + Enter for a new line · Use the microphone to dictate
             </Typography>
