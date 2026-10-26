@@ -1,0 +1,728 @@
+/* NexaMind Chat — namespaced styles. Does not change other pages. */
+
+.nx-chat {
+  width: 100%;
+  min-width: 0;
+  color: #f5f5fc;
+  padding: 0 0 20px;
+}
+
+.nx-chat *,
+.nx-chat *::before,
+.nx-chat *::after {
+  box-sizing: border-box;
+}
+
+.nx-chat__shell {
+  width: 100%;
+  max-width: 1240px;
+  height: calc(100vh - 104px);
+  min-height: 540px;
+  max-height: 1100px;
+  margin: 0 auto;
+}
+
+.nx-chat .nx-chat__panel.MuiPaper-root {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(160, 160, 210, 0.14);
+  border-radius: 18px;
+  background: #0e0f19;
+  background-image: none;
+  color: #f5f5fc;
+  box-shadow: 0 12px 38px rgba(0, 0, 0, 0.13);
+}
+
+.nx-chat__header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.012);
+}
+
+.nx-chat__brand-avatar.MuiAvatar-root {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(147, 130, 255, 0.24);
+  border-radius: 13px;
+  background: rgba(147, 130, 255, 0.14);
+  color: #b5a9ff;
+}
+
+.nx-chat__brand-avatar svg {
+  width: 21px;
+  height: 21px;
+}
+
+.nx-chat .nx-chat__title.MuiTypography-root {
+  color: #f5f5fc;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.25px;
+  line-height: 1.4;
+}
+
+.nx-chat .nx-chat__subtitle.MuiTypography-root {
+  margin-top: 3px;
+  color: #9da1ba;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.nx-chat .nx-chat__header-chip.MuiChip-root {
+  height: 27px;
+  border: 1px solid rgba(147, 130, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(147, 130, 255, 0.08);
+  color: #c3baff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.nx-chat__divider.MuiDivider-root {
+  border-color: rgba(160, 160, 210, 0.12);
+}
+
+.nx-chat__messages {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 28px 26px 18px;
+  scrollbar-width: thin;
+  scrollbar-color: #34354a transparent;
+}
+
+.nx-chat__welcome {
+  display: flex;
+  width: 100%;
+  min-height: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 0 38px;
+  text-align: center;
+}
+
+.nx-chat__welcome-icon {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  margin-bottom: 19px;
+  place-items: center;
+  border: 1px solid rgba(147, 130, 255, 0.2);
+  border-radius: 18px;
+  background: radial-gradient(circle at 25% 20%, rgba(180, 154, 255, 0.2), rgba(147, 130, 255, 0.07));
+  color: #b5a7ff;
+}
+
+.nx-chat__welcome-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.nx-chat .nx-chat__welcome-title.MuiTypography-root {
+  color: #f5f5fc;
+  font-size: clamp(22px, 2.8vw, 29px);
+  font-weight: 800;
+  letter-spacing: -0.75px;
+  line-height: 1.28;
+}
+
+.nx-chat .nx-chat__welcome-copy.MuiTypography-root {
+  max-width: 540px;
+  margin-top: 11px;
+  color: #a1a3b8;
+  font-size: 12.5px;
+  line-height: 1.8;
+}
+
+.nx-chat__suggestions {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 11px;
+  margin-top: 27px;
+}
+
+.nx-chat .MuiButton-root.nx-chat__suggestion {
+  display: flex;
+  min-width: 0;
+  min-height: 83px;
+  height: auto;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+  gap: 11px;
+  margin: 0;
+  padding: 15px;
+  border: 1px solid rgba(160, 160, 210, 0.13);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.018);
+  color: #dfe0ee;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: left;
+  text-transform: none;
+  white-space: normal;
+  box-shadow: none;
+}
+
+.nx-chat .MuiButton-root.nx-chat__suggestion .MuiButton-startIcon {
+  margin: 0;
+  color: #a99aff;
+}
+
+.nx-chat .MuiButton-root.nx-chat__suggestion .MuiButton-startIcon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.nx-chat .MuiButton-root.nx-chat__suggestion:hover {
+  border-color: rgba(147, 130, 255, 0.4);
+  background: rgba(147, 130, 255, 0.07);
+  box-shadow: none;
+}
+
+.nx-chat__message-list {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.nx-chat__row {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.nx-chat__row--user {
+  justify-content: flex-end;
+}
+
+.nx-chat__message-avatar.MuiAvatar-root {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border: 1px solid rgba(147, 130, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(147, 130, 255, 0.12);
+  color: #b5a7ff;
+}
+
+.nx-chat__message-avatar svg {
+  width: 16px;
+  height: 16px;
+}
+
+.nx-chat__message {
+  min-width: 0;
+  max-width: min(82%, 760px);
+  overflow-wrap: anywhere;
+}
+
+.nx-chat__message--user {
+  padding: 12px 15px;
+  border: 1px solid rgba(147, 130, 255, 0.35);
+  border-radius: 16px 16px 4px 16px;
+  background: linear-gradient(135deg, #6557ca, #5146a7);
+  color: #fff;
+  box-shadow: 0 5px 16px rgba(41, 34, 104, 0.14);
+}
+
+.nx-chat__message--assistant {
+  flex: 1 1 auto;
+  padding: 2px 0 0;
+  color: #e6e7f3;
+}
+
+.nx-chat .nx-chat__sender.MuiTypography-root {
+  margin: 0 0 8px;
+  color: #b5a7ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15px;
+}
+
+.nx-chat .nx-chat__user-text.MuiTypography-root {
+  margin: 0;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.nx-chat__markdown {
+  color: #e0e1ee;
+  font-size: 13px;
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+
+.nx-chat__markdown > :first-child {
+  margin-top: 0;
+}
+
+.nx-chat__markdown > :last-child {
+  margin-bottom: 0;
+}
+
+.nx-chat__markdown h1,
+.nx-chat__markdown h2,
+.nx-chat__markdown h3,
+.nx-chat__markdown h4 {
+  margin: 20px 0 9px;
+  color: #f5f5fc;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  line-height: 1.4;
+}
+
+.nx-chat__markdown h1 {
+  font-size: 21px;
+}
+
+.nx-chat__markdown h2 {
+  font-size: 18px;
+}
+
+.nx-chat__markdown h3 {
+  font-size: 15px;
+}
+
+.nx-chat__markdown h4 {
+  font-size: 13px;
+}
+
+.nx-chat__markdown p {
+  margin: 0 0 13px;
+}
+
+.nx-chat__markdown ul,
+.nx-chat__markdown ol {
+  margin: 8px 0 14px;
+  padding-left: 24px;
+}
+
+.nx-chat__markdown li {
+  margin: 5px 0;
+  padding-left: 2px;
+}
+
+.nx-chat__markdown li::marker {
+  color: #a99aff;
+}
+
+.nx-chat__markdown blockquote {
+  margin: 13px 0;
+  padding: 9px 14px;
+  border-left: 3px solid #8878f4;
+  border-radius: 0 8px 8px 0;
+  background: rgba(147, 130, 255, 0.06);
+  color: #c9c9dc;
+}
+
+.nx-chat__markdown a {
+  color: #b8acff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.nx-chat__markdown strong {
+  color: #fff;
+  font-weight: 800;
+}
+
+.nx-chat__markdown hr {
+  margin: 18px 0;
+  border: 0;
+  border-top: 1px solid rgba(160, 160, 210, 0.15);
+}
+
+.nx-chat__markdown pre {
+  max-width: 100%;
+  margin: 13px 0;
+  padding: 15px;
+  overflow-x: auto;
+  border: 1px solid rgba(160, 160, 210, 0.14);
+  border-radius: 11px;
+  background: #090a12;
+  color: #e5e7f4;
+  font-size: 12px;
+  line-height: 1.7;
+  scrollbar-width: thin;
+}
+
+.nx-chat__markdown pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  white-space: pre;
+}
+
+.nx-chat__markdown :not(pre) > code {
+  padding: 2px 6px;
+  border: 1px solid rgba(160, 160, 210, 0.12);
+  border-radius: 5px;
+  background: rgba(147, 130, 255, 0.1);
+  color: #c8bdff;
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+}
+
+.nx-chat__sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(160, 160, 210, 0.12);
+}
+
+.nx-chat .nx-chat__sources-label.MuiTypography-root {
+  margin-right: 2px;
+  color: #9da1ba;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.nx-chat .MuiChip-root.nx-chat__source-chip {
+  max-width: 100%;
+  height: 25px;
+  border: 1px solid rgba(147, 130, 255, 0.17);
+  border-radius: 7px;
+  background: rgba(147, 130, 255, 0.08);
+  color: #c5bdff;
+  font-size: 10px;
+}
+
+.nx-chat .nx-chat__source-chip .MuiChip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nx-chat__message-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 9px;
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__copy-button {
+  width: 27px;
+  height: 27px;
+  color: #8589a5;
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__copy-button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e6e7f3;
+}
+
+.nx-chat .nx-chat__copy-label.MuiTypography-root {
+  color: #8589a5;
+  font-size: 10px;
+}
+
+.nx-chat__thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 13px;
+  border: 1px solid rgba(160, 160, 210, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.018);
+  color: #a1a3b8;
+  font-size: 11px;
+}
+
+.nx-chat__thinking .MuiCircularProgress-root {
+  color: #a99aff;
+}
+
+.nx-chat .MuiAlert-root.nx-chat__error {
+  flex: 0 0 auto;
+  margin: 0 20px 8px;
+  border: 1px solid rgba(245, 189, 97, 0.25);
+  border-radius: 10px;
+  background: rgba(245, 189, 97, 0.07);
+  color: #f3e6c8;
+  font-size: 11px;
+}
+
+.nx-chat .MuiAlert-root.nx-chat__error .MuiAlert-icon {
+  color: #f5bd61;
+}
+
+.nx-chat__composer-wrap {
+  flex: 0 0 auto;
+  padding: 15px 22px 12px;
+  border-top: 1px solid rgba(160, 160, 210, 0.12);
+  background: #0e0f19;
+}
+
+.nx-chat__composer {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: flex-end;
+  gap: 9px;
+  padding: 7px;
+  border: 1px solid rgba(160, 160, 210, 0.18);
+  border-radius: 14px;
+  background: #141522;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.nx-chat__composer:focus-within {
+  border-color: rgba(147, 130, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(147, 130, 255, 0.07);
+}
+
+.nx-chat .MuiTextField-root.nx-chat__input {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.nx-chat .nx-chat__input .MuiOutlinedInput-root {
+  min-height: 42px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: transparent;
+  color: #f5f5fc;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.nx-chat .nx-chat__input .MuiOutlinedInput-notchedOutline {
+  border: 0;
+}
+
+.nx-chat .nx-chat__input .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border: 0;
+}
+
+.nx-chat .nx-chat__input .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border: 0;
+}
+
+.nx-chat .nx-chat__input .MuiInputBase-input::placeholder {
+  color: #8e92ab;
+  opacity: 1;
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__voice-button,
+.nx-chat .MuiIconButton-root.nx-chat__send-button {
+  display: inline-flex;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  border-radius: 10px;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__voice-button {
+  border: 1px solid rgba(160, 160, 210, 0.14);
+  background: rgba(255, 255, 255, 0.025);
+  color: #c2c4d8;
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__voice-button:hover {
+  background: rgba(147, 130, 255, 0.1);
+  color: #c7bdff;
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__voice-button.is-listening {
+  border-color: rgba(250, 130, 150, 0.38);
+  background: rgba(250, 130, 150, 0.12);
+  color: #fa8296;
+  animation: nx-voice-pulse 1.2s ease-in-out infinite;
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__send-button {
+  background: linear-gradient(135deg, #9382ff, #7665e9);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(102, 86, 204, 0.18);
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__send-button:hover {
+  background: linear-gradient(135deg, #a395ff, #8574f6);
+  transform: translateY(-1px);
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__send-button.Mui-disabled {
+  background: #29283e;
+  color: #77748e;
+  box-shadow: none;
+}
+
+.nx-chat .MuiIconButton-root.nx-chat__voice-button.Mui-disabled {
+  color: #666a81;
+}
+
+.nx-chat .nx-chat__hint.MuiTypography-root {
+  margin: 8px 4px 0;
+  color: #777c96;
+  font-size: 9.5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@keyframes nx-voice-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(250, 130, 150, 0.02);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(250, 130, 150, 0.08);
+  }
+}
+
+@media (max-width: 800px) {
+  .nx-chat__shell {
+    height: calc(100vh - 92px);
+    min-height: 500px;
+  }
+
+  .nx-chat__messages {
+    padding: 22px 18px 15px;
+  }
+
+  .nx-chat__suggestions {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 430px;
+    margin-top: 22px;
+  }
+
+  .nx-chat .MuiButton-root.nx-chat__suggestion {
+    min-height: 54px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 14px;
+  }
+
+  .nx-chat__message {
+    max-width: 90%;
+  }
+
+  .nx-chat__header {
+    padding: 15px 17px;
+  }
+
+  .nx-chat__composer-wrap {
+    padding: 12px 14px 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .nx-chat__shell {
+    height: calc(100dvh - 82px);
+    min-height: 460px;
+  }
+
+  .nx-chat .nx-chat__panel.MuiPaper-root {
+    border-radius: 13px;
+  }
+
+  .nx-chat__header {
+    gap: 8px;
+    padding: 13px;
+  }
+
+  .nx-chat .nx-chat__header-chip.MuiChip-root {
+    height: 24px;
+    font-size: 9px;
+  }
+
+  .nx-chat__messages {
+    padding: 18px 13px 12px;
+  }
+
+  .nx-chat__welcome {
+    padding: 12px 0 20px;
+  }
+
+  .nx-chat .nx-chat__welcome-copy.MuiTypography-root {
+    font-size: 11.5px;
+  }
+
+  .nx-chat__message-list {
+    gap: 19px;
+  }
+
+  .nx-chat__row {
+    gap: 8px;
+  }
+
+  .nx-chat__message {
+    max-width: 92%;
+  }
+
+  .nx-chat__message--user {
+    padding: 10px 12px;
+  }
+
+  .nx-chat__markdown {
+    font-size: 12px;
+  }
+
+  .nx-chat .nx-chat__input .MuiOutlinedInput-root {
+    padding: 7px 6px;
+    font-size: 12px;
+  }
+
+  .nx-chat .MuiIconButton-root.nx-chat__voice-button,
+  .nx-chat .MuiIconButton-root.nx-chat__send-button {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+    flex-basis: 36px;
+    border-radius: 9px;
+  }
+
+  .nx-chat__composer-wrap {
+    padding: 10px 9px 9px;
+  }
+
+  .nx-chat .nx-chat__hint.MuiTypography-root {
+    font-size: 8.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-chat *,
+  .nx-chat *::before,
+  .nx-chat *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
